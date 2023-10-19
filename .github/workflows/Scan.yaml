@@ -1,8 +1,8 @@
 name: build
 on:
-  push: 
-      branches:
-          - v<digit>.<digit>
+  push 
+    #   branches:
+    #       - v<digit>.<digit>
 
 jobs:
   build:
