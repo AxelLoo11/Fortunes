@@ -18,21 +18,20 @@ jobs:
             scan-type: 'fs'
             ignore-unfixed: true
             format: 'table'
-            output: 'trivy-results.table'
-            severity: 'CRITICAL'  # if want to fail, add 'HIGH' in it
+            output: 'trivy-results.txt'
+            severity: 'HIGH'  # if want to fail, add 'HIGH' in it
 
-    #   - name: Debug Workspace Contents
-    #     run: cat trivy-results.table
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-            sarif_file: 'trivy-results.table'
-
+      - name: Debug Workspace Contents
+        run: cat trivy-results.txt
+    
       - name: Upload file to Slack
         uses: MeilCli/slack-upload-file@v3
         with:
           slack_token: ${{ secrets.BOT_TOKEN }} # act --secret-file tmp.github_secrets
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-          file_path: 'trivy-results.table'
+          file_path: 'trivy-results.txt'
           initial_comment: 'post by slack-upload-file'
-          # thread_ts: 'option'
+          file_type: 'text'
+          file_name: 'trivy-results.txt'
+          title: 'Trivy-Result'
+        #   thread_ts: 'option'
