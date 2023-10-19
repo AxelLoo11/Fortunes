@@ -1,0 +1,13 @@
+name: My workflow
+
+on:
+- push
+
+jobs:
+    my_ci:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name:
+              id:
+              uses: 
