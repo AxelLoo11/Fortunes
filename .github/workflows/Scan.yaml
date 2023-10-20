@@ -38,7 +38,6 @@ jobs:
         with:
           # Slack channel id, channel name, or user id to post message.
           # See also: https://api.slack.com/methods/chat.postMessage#channels
-          channel-id: ${{secrets.SLACK_CHANNEL_ID}}
           # For posting a rich message using Block Kit
           payload: |
             {
@@ -83,7 +82,8 @@ jobs:
               ]              
             }
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.TEST_LINK }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
     
       - name: Upload file to Slack
         uses: MeilCli/slack-upload-file@v3
