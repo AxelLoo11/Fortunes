@@ -37,7 +37,7 @@ jobs:
         uses: slackapi/slack-github-action@v1.24.0
         with:
           # Slack channel id, channel name, or user id to post message.
-          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          channel-id: '${{ secrets.SLACK_CHANNEL_ID }}'
           # See also: https://api.slack.com/methods/chat.postMessage#channels
           # For posting a rich message using Block Kit
           payload: |
