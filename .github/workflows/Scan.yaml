@@ -19,7 +19,7 @@ jobs:
             ignore-unfixed: true
             format: 'table'
             output: 'trivy-results.txt'
-            severity: 'HIGH'  # if want to fail, add 'HIGH' in it
+            severity: 'CRITICAL,HIGH'  # if want to fail, add 'HIGH' in it
 
     #   - name: Debug Workspace Contents
     #     run: cat trivy-results.txt
