@@ -21,8 +21,8 @@ jobs:
             output: 'trivy-results.txt'
             severity: 'HIGH'  # if want to fail, add 'HIGH' in it
 
-      - name: Debug Workspace Contents
-        run: cat trivy-results.txt
+    #   - name: Debug Workspace Contents
+    #     run: cat trivy-results.txt
     
       - name: Upload file to Slack
         uses: MeilCli/slack-upload-file@v3
