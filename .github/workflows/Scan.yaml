@@ -30,7 +30,7 @@ jobs:
           slack_token: ${{ secrets.BOT_TOKEN }} # act --secret-file tmp.github_secrets
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           file_path: 'trivy-results.txt'
-          initial_comment: 'post by slack-upload-file'
+          initial_comment: '11 post by slack-upload-file'
           file_type: 'text'
           file_name: 'trivy-results.txt'
           title: 'Trivy-Result'
