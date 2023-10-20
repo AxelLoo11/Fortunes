@@ -31,6 +31,59 @@ jobs:
 
     #   - name: Debug Workspace Contents
     #     run: cat trivy-results.txt
+
+      - name: Post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          # Slack channel id, channel name, or user id to post message.
+          # See also: https://api.slack.com/methods/chat.postMessage#channels
+          channel-id: ${{secrets.SLACK_CHANNEL_ID}}
+          # For posting a rich message using Block Kit
+          payload: |
+            {
+              "text": "TESTTEST",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "New request"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Type:*\nPaid Time Off"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Created by:*\n<example.com|Fred Enriquez>"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*When:*\nAug 10 - Aug 13"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "<https://example.com|View request>"
+                  }
+                }
+              ]              
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
     
       - name: Upload file to Slack
         uses: MeilCli/slack-upload-file@v3
@@ -38,7 +91,7 @@ jobs:
           slack_token: ${{ secrets.BOT_TOKEN }} # act --secret-file tmp.github_secrets
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           file_path: 'trivy-results.txt'
-          initial_comment: '11 post by slack-upload-file'
+          initial_comment: 'Scan report by 11'
           file_type: 'text'
           file_name: 'trivy-results.txt'
           title: 'Trivy-Result'
