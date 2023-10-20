@@ -1,4 +1,4 @@
-name: scan success branch
+name: Scan success branch test
 on:
   push 
     #   branches:

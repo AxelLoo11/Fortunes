@@ -1,12 +1,12 @@
-name: build
+name: Scan failed branch test
 on:
   push 
     #   branches:
     #       - v<digit>.<digit>
 
 jobs:
-  build:
-    name: Build
+  scan:
+    name: Scan
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout code
