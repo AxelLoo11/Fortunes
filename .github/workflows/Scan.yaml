@@ -32,60 +32,16 @@ jobs:
     #   - name: Debug Workspace Contents
     #     run: cat trivy-results.txt
 
-      - name: Post to a Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          # Slack channel id, channel name, or user id to post message.
-          channel-id: '${{ secrets.SLACK_CHANNEL_ID }}'
-          # See also: https://api.slack.com/methods/chat.postMessage#channels
-          # For posting a rich message using Block Kit
-          payload: |
-            {
-              "text": "TESTTEST",
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "New request"
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Type:*\nPaid Time Off"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Created by:*\n<example.com|Fred Enriquez>"
-                    }
-                  ]
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*When:*\nAug 10 - Aug 13"
-                    }
-                  ]
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "<https://example.com|View request>"
-                  }
-                }
-              ]              
-            }
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
         env:
-          # SLACK_WEBHOOK_URL: ${{ secrets.TEST_LINK }}
-          # SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-          SLACK_BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 'Post Content :rocket:'
+          SLACK_TITLE: Post Title
+          SLACK_USERNAME: rtCamp
+          SLACK_WEBHOOK: ${{ secrets.TEST_LINK }}
     
       - name: Upload file to Slack
         uses: MeilCli/slack-upload-file@v3
