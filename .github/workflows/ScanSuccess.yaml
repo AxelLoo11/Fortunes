@@ -47,4 +47,4 @@ jobs:
       - name: Sign the published Docker image
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-        run: cosign sign --key cosign.key alexis11v/adlc3ca:test@${{ steps.build-and-push.outputs.digest }}
+        run: cosign sign --key cosign.key alexis11v/adlc3:test@${{ steps.build-and-push.outputs.digest }}
