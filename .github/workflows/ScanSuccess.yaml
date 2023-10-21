@@ -68,7 +68,7 @@ jobs:
         run: 'echo "$KEY" > cosign.key'
         shell: bash
         env:
-          KEY: ${{ secrets.COSIGN_KEY }}
+          KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
       
       # cosign sign --key cosign.key alexis11v/adlc3ca:v1@sha256:8af31f28d879bff0392993f3acb4c01c0971784780e688ab7ba186c665a7a523
       # cosign sign --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
@@ -77,8 +77,8 @@ jobs:
           cosign sign --key cosign.key "${TAGS}@${DIGEST}"
         env:
           TAGS: alexis11v/adlc3ca:v1
-          # COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_KEY }}
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PWD }}
+          # COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
       # cosign verify --key cosign.pub alexis11v/adlc3ca:v1@sha256:8af31f28d879bff0392993f3acb4c01c0971784780e688ab7ba186c665a7a523
