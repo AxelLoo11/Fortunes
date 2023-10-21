@@ -53,22 +53,29 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-            
+
+      - id: docker_meta
+        name: get the docker metadata
+        uses: docker/metadata-action@v4.4.0
+        with:
+          images: alexis11v/adlc3ca
+          tags: type=sha,format=long
+              
       - name: Build and push the image to docker hub
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: alexis11v/adlc3ca:v1
+          tags: ${{ steps.docker_meta.outputs.tags}}
       
       # cosign sign --key cosign.key alexis11v/adlc3ca:v1@sha256:8af31f28d879bff0392993f3acb4c01c0971784780e688ab7ba186c665a7a523
       # cosign sign --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
       - name: Sign image with a key (in PEM format)
         run: |
-          cosign sign --key cosign.key "${TAGS}@${DIGEST}"
+          cosign sign --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
         env:
-          TAGS: ${{ steps.build-and-push.outputs.tags }}
-          # COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          TAGS: ${{ steps.docker_meta.outputs.tags }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
