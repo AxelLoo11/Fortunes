@@ -63,7 +63,7 @@ jobs:
           push: true
           tags: alexis11v/adlc3ca:v1
 
-      - name: Sign image with a key
+      - name: Sign image with a key (in PEM format)
         run: |
           cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}"
         env:
