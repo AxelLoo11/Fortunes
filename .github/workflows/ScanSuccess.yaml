@@ -69,7 +69,6 @@ jobs:
         env:
           TAGS: alexis11v/adlc3ca:v1
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_KEY }}
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PWD}}
 
       - name: Verify Cosign signature
         run: |
