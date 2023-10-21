@@ -65,10 +65,10 @@ jobs:
       # cosign sign --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
       - name: Sign image with a key (in PEM format)
         run: |
-          cosign sign --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
+          cosign sign --key cosign.key "${TAGS}@${DIGEST}"
         env:
           TAGS: alexis11v/adlc3ca:v1
-          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          # COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
 

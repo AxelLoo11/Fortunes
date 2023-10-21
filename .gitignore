@@ -1,3 +1,2 @@
 *.secret
 tmp.*
-*.key
