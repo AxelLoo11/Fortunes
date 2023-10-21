@@ -58,6 +58,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
             
       - name: Build and push the image to docker hub
+        id: build-and-push
         uses: docker/build-push-action@v5
         with:
           push: true
@@ -65,10 +66,11 @@ jobs:
 
       - name: Sign image with a key (in PEM format)
         run: |
-          cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}"
+          cosign sign --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
         env:
           TAGS: alexis11v/adlc3ca:v1
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_KEY }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
       - name: Verify Cosign signature
         run: |
