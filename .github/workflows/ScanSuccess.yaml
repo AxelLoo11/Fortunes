@@ -1,87 +1,50 @@
-name: Scan success branch test
+name: Docker CI
+
 on:
-  push: 
-      branches:
-      - 'v[0-9]+.[0-9]+'
+  - push
+    
+env:
+  IMAGE_NAME: signedcontainer
 
 jobs:
-  scan:
-    name: Scan
-    runs-on: ubuntu-20.04
+  build:
 
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Check Commit Message
-        run: |
-          if [[ "${{ github.event.head_commit.message }}" == "#NORUN"* ]]; then
-            echo "Commit message starts with #NORUN. Skipping this workflow."
-            exit 78  # Exit with a neutral status code to prevent the workflow from running.
-          fi
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v1.6.0
 
-      - name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@master
-        with:
-            scan-type: 'fs'
-            ignore-unfixed: true
-            format: 'table'
-            output: 'trivy-results.txt'
-            severity: 'CRITICAL'  # if want to fail, add 'HIGH' in it
-
-      # - name: Install go
-      #   uses: actions/setup-go@v4
-      #   with:
-      #     go-version: '1.18'
-      #     check-latest: true
-
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.1.1
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - name: Log into Docker Hub
+        uses: docker/login-action@v1.12.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - id: docker_meta
-        name: get the docker metadata
-        uses: docker/metadata-action@v4.4.0
-        with:
-          images: alexis11v/adlc3ca
-          tags: type=sha,format=long
-              
-      - name: Build and push the image to docker hub
+      - name: Build and push Docker image
         id: build-and-push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v2.9.0
         with:
+          context: .
           push: true
-          tags: ${{ steps.docker_meta.outputs.tags}}
+          tags: alexis11v/adlc3:test
       
-      # cosign sign --key cosign.key alexis11v/adlc3ca:v1@sha256:8af31f28d879bff0392993f3acb4c01c0971784780e688ab7ba186c665a7a523
-      # cosign sign --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
-      - name: Sign image with a key (in PEM format)
-        run: |
-          cosign sign --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
+      - name: cosign-installer
+        uses: sigstore/cosign-installer@v2.0.0
+        
+      - name: Write signing key to disk
+        run: 'echo "$KEY" > cosign.key'
+        shell: bash
         env:
-          TAGS: ${{ steps.docker_meta.outputs.tags }}
-          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+      
+      - name: Sign the published Docker image
+        env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
-
-      # cosign verify --key cosign.pub alexis11v/adlc3ca:v1@sha256:8af31f28d879bff0392993f3acb4c01c0971784780e688ab7ba186c665a7a523
-      - name: Verify Cosign signature
-        run: |
-          cosign verify --key cosign.pub "${TAGS}"
-        env:
-          TAGS: alexis11v/adlc3ca:v1
+        run: cosign sign --key cosign.key alexis11v/adlc3ca:test@${{ steps.build-and-push.outputs.digest }}
