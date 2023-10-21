@@ -67,7 +67,7 @@ jobs:
         run: |
           cosign sign --key cosign.key "${TAGS}@${DIGEST}"
         env:
-          TAGS: alexis11v/adlc3ca:v1
+          TAGS: ${{ steps.build-and-push.outputs.tags }}
           # COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
