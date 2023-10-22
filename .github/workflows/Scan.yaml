@@ -1,0 +1,57 @@
+name: Scan failed branch test
+on:
+  push: 
+    branches:
+    - 'v[0-9]+.[0-9]+'
+
+jobs:
+  scan:
+    name: Scan
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check Commit Message
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == "#NORUN"* ]]; then
+            echo "Commit message starts with #NORUN. Skipping this workflow."
+            exit 78  # Exit with a neutral status code to prevent the workflow from running.
+          fi
+
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Trivy vulnerability scanner in repo mode
+        uses: aquasecurity/trivy-action@master
+        with:
+            scan-type: 'fs'
+            ignore-unfixed: true
+            format: 'table'
+            output: 'trivy-results.txt'
+            severity: 'CRITICAL,HIGH'  # if want to fail, add 'HIGH' in it
+
+    #   - name: Debug Workspace Contents
+    #     run: cat trivy-results.txt
+
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 'Failed trivy scan, see uploaded report'
+          SLACK_TITLE: Scan failed 11
+          SLACK_USERNAME: 11v
+          SLACK_MSG_AUTHOR: AxelLoo11
+          SLACK_WEBHOOK: ${{ secrets.TEST_LINK }}
+    
+      - name: Upload file to Slack
+        uses: MeilCli/slack-upload-file@v3
+        with:
+          slack_token: ${{ secrets.BOT_TOKEN }} # act --secret-file tmp.github_secrets
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          file_path: 'trivy-results.txt'
+          initial_comment: 'Scan report by 11'
+          file_type: 'text'
+          file_name: 'trivy-results.txt'
+          title: 'Trivy-Result'
+        #   thread_ts: 'option'
