@@ -44,14 +44,13 @@ jobs:
           SLACK_MSG_AUTHOR: AxelLoo11
           SLACK_WEBHOOK: ${{ secrets.SLACK_LINK }}
     
-      - name: Upload file to Slack
-        uses: MeilCli/slack-upload-file@v3
-        with:
-          slack_token: ${{ secrets.SLACK_BOT_TOKEN }} # act --secret-file tmp.github_secrets
-          channel_id: ${{ secrets.MY_CHANNEL_ID }}
-          file_path: 'trivy-results.txt'
-          initial_comment: 'Scan report by 11'
-          file_type: 'text'
-          file_name: 'trivy-results.txt'
-          title: 'Trivy-Result'
-        #   thread_ts: 'option'
+    #   - name: Upload file to Slack
+    #     uses: MeilCli/slack-upload-file@v3
+    #     with:
+    #       slack_token: ${{ secrets.SLACK_BOT_TOKEN }} # act --secret-file tmp.github_secrets
+    #       channel_id: ${{ secrets.MY_CHANNEL_ID }}
+    #       file_path: 'trivy-results.txt'
+    #       initial_comment: 'Scan report by 11'
+    #       file_type: 'text'
+    #       file_name: 'trivy-results.txt'
+    #       title: 'Trivy-Result'

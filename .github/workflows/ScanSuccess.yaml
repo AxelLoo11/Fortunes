@@ -87,8 +87,11 @@ jobs:
           SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
           SLACK_ICON: https://github.com/rtCamp.png?size=48
           SLACK_MESSAGE: |
-            *Name:* 11v
-            *Metriculation:* 134567
+            *Name:* ZHANG SHIYI
+            *Metriculation:* A0287090Y
+            *Email:* e1275109@u.nus.edu
+            *Git:* https://github.com/AxelLoo11/Fortunes
+            *Image:* https://hub.docker.com/repository/docker/alexis11v/adlc3ca/general
           SLACK_TITLE: Image build and signed
           SLACK_USERNAME: 11v
           SLACK_MSG_AUTHOR: AxelLoo11
