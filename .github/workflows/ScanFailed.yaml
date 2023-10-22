@@ -36,21 +36,21 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_CHANNEL: general
-          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_COLOR: 'red' # or a specific color like 'good' or '#ff00ff'
           SLACK_ICON: https://github.com/rtCamp.png?size=48
           SLACK_MESSAGE: 'Failed trivy scan, see uploaded report'
-          SLACK_TITLE: Scan failed 11
-          SLACK_USERNAME: 11v
+          SLACK_TITLE: Scan failed - ZHANG SHIYI
+          SLACK_USERNAME: ZHANG SHIYI
           SLACK_MSG_AUTHOR: AxelLoo11
-          SLACK_WEBHOOK: ${{ secrets.SLACK_LINK }}
+          SLACK_WEBHOOK: ${{ secrets.SUBMIT_LINK }}
     
-    #   - name: Upload file to Slack
-    #     uses: MeilCli/slack-upload-file@v3
-    #     with:
-    #       slack_token: ${{ secrets.SLACK_BOT_TOKEN }} # act --secret-file tmp.github_secrets
-    #       channel_id: ${{ secrets.MY_CHANNEL_ID }}
-    #       file_path: 'trivy-results.txt'
-    #       initial_comment: 'Scan report by 11'
-    #       file_type: 'text'
-    #       file_name: 'trivy-results.txt'
-    #       title: 'Trivy-Result'
+      - name: Upload file to Slack
+        uses: MeilCli/slack-upload-file@v3
+        with:
+          slack_token: ${{ secrets.BOT_TOKEN }} # act --secret-file tmp.github_secrets
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          file_path: 'trivy-results.txt'
+          initial_comment: 'Scan report by 11'
+          file_type: 'text'
+          file_name: 'trivy-results.txt'
+          title: 'Trivy-Result'

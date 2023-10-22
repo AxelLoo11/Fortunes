@@ -93,6 +93,6 @@ jobs:
             *Git:* https://github.com/AxelLoo11/Fortunes
             *Image:* https://hub.docker.com/repository/docker/alexis11v/adlc3ca/general
           SLACK_TITLE: Image build and signed
-          SLACK_USERNAME: 11v
+          SLACK_USERNAME: ZHANG SHIYI
           SLACK_MSG_AUTHOR: AxelLoo11
-          SLACK_WEBHOOK: ${{ secrets.SLACK_LINK }}
+          SLACK_WEBHOOK: ${{ secrets.SUBMIT_LINK }}
