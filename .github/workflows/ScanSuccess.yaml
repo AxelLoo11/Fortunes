@@ -7,10 +7,24 @@ on:
 jobs:
   scan:
     name: Scan
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
     steps:
+      - name: Check Commit Message
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == "#NORUN"* ]]; then
+            echo "Commit message starts with #NORUN. Skipping this workflow."
+            exit 78  # Exit with a neutral status code to prevent the workflow from running.
+          fi
+
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3.5.2
+        with:
+          fetch-depth: 1
 
       - name: Run Trivy vulnerability scanner in repo mode
         uses: aquasecurity/trivy-action@master
@@ -21,5 +35,64 @@ jobs:
             output: 'trivy-results.txt'
             severity: 'CRITICAL'  # if want to fail, add 'HIGH' in it
 
-    #   - name: Debug Workspace Contents
-    #     run: cat trivy-results.txt
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.1.1
+        with:
+          cosign-release: 'v2.2.0' # optional
+
+      - name: Check the version of Cosign
+        run: cosign version
+        
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2.1.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2.5.0
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2.1.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - id: docker_meta
+        name: get the docker metadata
+        uses: docker/metadata-action@v4.4.0
+        with:
+          images: alexis11v/adlc3ca
+          tags: v2
+              
+      - name: Build and push the image to docker hub
+        id: build-and-push
+        uses: docker/build-push-action@v4.0.0
+        with:
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags}}
+      
+      # cosign sign --key cosign.key alexis11v/adlc3ca:v1@sha256:8af31f28d879bff0392993f3acb4c01c0971784780e688ab7ba186c665a7a523
+      # cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
+      - name: Sign image with a key (in PEM format)
+        run: |
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}"
+        env:
+          TAGS: ${{ steps.docker_meta.outputs.tags }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          # DIGEST: ${{ steps.build-and-push.outputs.digest }}
+
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: |
+            *Name:* ZHANG SHIYI
+            *Metriculation:* A0287090Y
+            *Email:* e1275109@u.nus.edu
+            *Git:* https://github.com/AxelLoo11/Fortunes
+            *Image:* https://hub.docker.com/repository/docker/alexis11v/adlc3ca/general
+          SLACK_TITLE: Image build and signed
+          SLACK_USERNAME: ZHANG SHIYI
+          SLACK_MSG_AUTHOR: AxelLoo11
+          SLACK_WEBHOOK: ${{ secrets.SUBMIT_LINK }}

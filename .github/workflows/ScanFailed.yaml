@@ -9,6 +9,14 @@ jobs:
     name: Scan
     runs-on: ubuntu-20.04
     steps:
+      - name: Check Commit Message
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == "#NORUN"* ]]; then
+            echo "Commit message starts with #NORUN. Skipping this workflow."
+            exit 78  # Exit with a neutral status code to prevent the workflow from running.
+          fi
+
+
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -23,6 +31,18 @@ jobs:
 
     #   - name: Debug Workspace Contents
     #     run: cat trivy-results.txt
+
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: '#ff0000' # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 'Failed trivy scan, see uploaded report'
+          SLACK_TITLE: Scan failed - ZHANG SHIYI
+          SLACK_USERNAME: ZHANG SHIYI
+          SLACK_MSG_AUTHOR: AxelLoo11
+          SLACK_WEBHOOK: ${{ secrets.SUBMIT_LINK }}
     
       - name: Upload file to Slack
         uses: MeilCli/slack-upload-file@v3
@@ -30,8 +50,7 @@ jobs:
           slack_token: ${{ secrets.BOT_TOKEN }} # act --secret-file tmp.github_secrets
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           file_path: 'trivy-results.txt'
-          initial_comment: '11 post by slack-upload-file'
+          initial_comment: 'Scan report by ZHANG SHIYI'
           file_type: 'text'
           file_name: 'trivy-results.txt'
           title: 'Trivy-Result'
-        #   thread_ts: 'option'
