@@ -87,45 +87,8 @@ jobs:
           SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
           SLACK_ICON: https://github.com/rtCamp.png?size=48
           SLACK_MESSAGE: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Name:* 11"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Metriculation:* 123456789"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Email:* <example@gmail.com>"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Git:* <https://github.com>"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Image:* <https://docker.com>"
-                  }
-                }
-              ]
-            }
+            *Name:* 11v
+            *Metriculation:* 134567
           SLACK_TITLE: Image build and signed
           SLACK_USERNAME: 11v
           SLACK_MSG_AUTHOR: AxelLoo11
