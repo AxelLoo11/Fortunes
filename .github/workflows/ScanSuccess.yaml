@@ -38,6 +38,9 @@ jobs:
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.1.1
 
+      - name: Check the version of Cosign
+        run: cosign version
+        
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2.1.0
 
@@ -59,7 +62,7 @@ jobs:
               
       - name: Build and push the image to docker hub
         id: build-and-push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v4.0.0
         with:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags}}
@@ -78,6 +81,6 @@ jobs:
       # cosign verify --key cosign.pub alexis11v/adlc3ca:v1@sha256:8af31f28d879bff0392993f3acb4c01c0971784780e688ab7ba186c665a7a523
       - name: Verify Cosign signature
         run: |
-          cosign verify --key cosign.pub "${TAGS}"
+          cosign verify --key cosign.pub "${DIGEST}"
         env:
-          TAGS: ${{ steps.docker_meta.outputs.tags }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
