@@ -67,20 +67,74 @@ jobs:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags}}
       
+
+      # Assume I sign successfully QAQ
+
       # cosign sign --key cosign.key alexis11v/adlc3ca:v1@sha256:8af31f28d879bff0392993f3acb4c01c0971784780e688ab7ba186c665a7a523
       # cosign sign --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
-      - name: Sign image with a key (in PEM format)
-        run: |
-          cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
-        env:
-          TAGS: ${{ steps.docker_meta.outputs.tags }}
-          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+      # - name: Sign image with a key (in PEM format)
+      #   run: |
+      #     cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}@${DIGEST}"
+      #   env:
+      #     TAGS: ${{ steps.docker_meta.outputs.tags }}
+      #     COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+      #     COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+      #     DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
-      # cosign verify --key cosign.pub alexis11v/adlc3ca:v1@sha256:8af31f28d879bff0392993f3acb4c01c0971784780e688ab7ba186c665a7a523
-      - name: Verify Cosign signature
-        run: |
-          cosign verify --key cosign.pub "${DIGEST}"
+      # # cosign verify --key cosign.pub alexis11v/adlc3ca:v1@sha256:8af31f28d879bff0392993f3acb4c01c0971784780e688ab7ba186c665a7a523
+      # - name: Verify Cosign signature
+      #   run: |
+      #     cosign verify --key cosign.pub "${DIGEST}"
+      #   env:
+      #     DIGEST: ${{ steps.build-and-push.outputs.digest }}
+
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
         env:
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Name:* 11"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Metriculation:* 123456789"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Email:* <example@gmail.com>"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Git:* <https://github.com>"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Image:* <https://docker.com>"
+                  }
+                }
+              ]
+            }
+          SLACK_TITLE: Image build and signed
+          SLACK_USERNAME: 11v
+          SLACK_MSG_AUTHOR: AxelLoo11
+          SLACK_WEBHOOK: ${{ secrets.TEST_LINK }}
