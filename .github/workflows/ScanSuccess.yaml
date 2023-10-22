@@ -129,4 +129,4 @@ jobs:
           SLACK_TITLE: Image build and signed
           SLACK_USERNAME: 11v
           SLACK_MSG_AUTHOR: AxelLoo11
-          SLACK_WEBHOOK: ${{ secrets.TEST_LINK }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_LINK }}

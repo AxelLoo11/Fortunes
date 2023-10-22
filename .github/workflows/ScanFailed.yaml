@@ -42,13 +42,13 @@ jobs:
           SLACK_TITLE: Scan failed 11
           SLACK_USERNAME: 11v
           SLACK_MSG_AUTHOR: AxelLoo11
-          SLACK_WEBHOOK: ${{ secrets.TEST_LINK }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_LINK }}
     
       - name: Upload file to Slack
         uses: MeilCli/slack-upload-file@v3
         with:
-          slack_token: ${{ secrets.BOT_TOKEN }} # act --secret-file tmp.github_secrets
-          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack_token: ${{ secrets.SLACK_BOT_TOKEN }} # act --secret-file tmp.github_secrets
+          channel_id: ${{ secrets.MY_CHANNEL_ID }}
           file_path: 'trivy-results.txt'
           initial_comment: 'Scan report by 11'
           file_type: 'text'
