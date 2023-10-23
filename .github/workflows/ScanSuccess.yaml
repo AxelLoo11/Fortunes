@@ -90,7 +90,7 @@ jobs:
             *Name:* ZHANG SHIYI
             *Metriculation:* A0287090Y
             *Email:* e1275109@u.nus.edu
-            *Git:* https://github.com/AxelLoo11/Fortunes
+            *Git:* https://github.com/${{ github.repository }}
             *Image:* https://hub.docker.com/repository/docker/alexis11v/adlc3ca/general
           SLACK_TITLE: Image build and signed
           SLACK_USERNAME: ZHANG SHIYI
